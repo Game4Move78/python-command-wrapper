@@ -40,6 +40,8 @@ def generate_wrapper(binary_name, local_path):
     return module_dir
 
 def install_wrapper(binary, local_path, use_poetry):
+    if local_path is None:
+        local_path = binary
     if use_poetry:
         try:
             import poetry
@@ -78,21 +80,22 @@ def uninstall_wrapper(binary):
     if len(os.listdir(wrappers_dir)) == 0:
         os.rmdir(wrappers_dir)
 
-def main(binary, local_path=None, use_poetry=False, uninstall=False):
-    if local_path is None:
-        local_path = binary
-    if uninstall:
-        uninstall_wrapper(binary)
-    else:
-        install_wrapper(binary, local_path, use_poetry)
-
-if __name__ == "__main__":
+def parse_args():
     parser = argparse.ArgumentParser(description="Generate a Python wrapper for a binary.")
-    parser.add_argument("binary", help="The binary (e.g., 'ls').")
+    parser.add_argument("binary", help="The binary.")
     parser.add_argument("local_path", default=None,
                         help="Relative path to the binary if not found in PATH.", nargs="?")
-    parser.add_argument("--use-poetry", action='store_true', default=False)
+    parser.add_argument("--poetry", action='store_true', default=False)
     parser.add_argument("--uninstall", action='store_true', default=False)
 
-    args = parser.parse_args()
-    main(args.binary, args.local_path, args.use_poetry, args.uninstall)
+    return parser.parse_args()
+
+def main():
+    args = parse_args()
+    if args.uninstall:
+        uninstall_wrapper(args.binary)
+    else:
+        install_wrapper(args.binary, args.local_path, args.use_poetry)
+
+if __name__ == "__main__":
+    main()
