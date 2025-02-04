@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "{module_name}"
+version = "0.1.0"
+license = "MPL-2.0"
+packages = [
+    {{ include = "{module_name}.py" }}
+]
+
+[tool.poetry.scripts]
+{output_name} = "{module_name}:main"
+
+[tool.poetry.dependencies]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
